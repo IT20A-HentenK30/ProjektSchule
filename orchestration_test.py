@@ -65,7 +65,7 @@ class OrchestrationTest(unittest.TestCase):
         msg_type = DisplayNotification
         func = self.test_subsriber_1.process_display_notifiacton
         self._orchestration.register(msg_type, func)
-        msg = DisplayNotification(0,"test_message_recieved")
+        msg = DisplayNotification(0,"test_message_not_recieved_not_subscribed")
         
         self._orchestration.send(msg)
 
@@ -76,3 +76,7 @@ class OrchestrationTest(unittest.TestCase):
         self.assertNotEqual(msg.source, self.test_subsriber_2.source)
         self.assertNotEqual(msg.destination, self.test_subsriber_2.detination)
      
+    def test_orchestration_is_singleton(self):
+        orch1 = Orchestration()
+        orch1 = Orchestration()
+        self.assertTrue(orch1 is orch1)
