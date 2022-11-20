@@ -1,5 +1,3 @@
-
-
 from abc import ABC
 from datetime import datetime
 
@@ -9,7 +7,7 @@ class Message(ABC):
     DEST_SERVER: int = 0
     DEST_CLIENT_ALL: int = -1
 
-    def __init__(self, destination):
+    def __init__(self, destination: int):
         self._source = -99
         self._destination = destination
         self._timestamp = datetime.now()
@@ -29,7 +27,7 @@ class Message(ABC):
 
 class PictureNotification(Message):
 
-    def __init__(self, destination, image):
+    def __init__(self, destination: int, image: bytearray):
         self._image = image
         super().__init__(destination)
 
@@ -39,7 +37,7 @@ class PictureNotification(Message):
 
 class DisplayNotification(Message):
 
-    def __init__(self, destination, text):
+    def __init__(self, destination: int, text: str):
         self._text = text
         super().__init__(destination)
 

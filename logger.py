@@ -1,24 +1,19 @@
+from asyncio import Lock
 from datetime import datetime
 import platform
-from threading import Lock
 import os
 import inspect
 
-
-class SingletonMeta(type):
+class LoggerMeta(type):
     _instances = {}
 
-    _lock: Lock = Lock()
-
     def __call__(cls, *args, **kwargs):
-        with cls._lock:
-            if cls not in cls._instances:
-                instance = super().__call__(*args, **kwargs)
-                cls._instances[cls] = instance
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
         return cls._instances[cls]
 
-
-class Logger(metaclass=SingletonMeta):
+class Logger(metaclass=LoggerMeta):
     
     PATH_WINDOWS: str       = "C:\\ProgramData\\Personenerkennung\\Logs\\"
     PATH_LINUX: str         = "/var/Personenerkennung/Logs/"
