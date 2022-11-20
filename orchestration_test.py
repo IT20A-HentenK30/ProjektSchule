@@ -1,7 +1,7 @@
 import unittest
 from messages import DisplayNotification
 from messages import PictureNotification
-from orchestration import Orchestration
+from orchestration import *
 
 class TestSubscriber:
     def __init__(self) -> None:
@@ -29,6 +29,7 @@ class OrchestrationTest(unittest.TestCase):
         self.test_subsriber_1 = TestSubscriber()
         self.test_subsriber_2 = TestSubscriber()
         self.test_subsriber_3 = TestSubscriber()
+        self._orchestration = Orchestration()
         return super().setUp()
 
     def __compare_message_and_subscriber_display(self, msg: DisplayNotification, sub: TestSubscriber):
@@ -37,19 +38,13 @@ class OrchestrationTest(unittest.TestCase):
         self.assertEqual(msg.source, sub.source)
         self.assertEqual(msg.destination, sub.detination)
 
-    def __compare_message_and_subscriber_picture(self, msg: PictureNotification, sub: TestSubscriber):
-        self.assertEqual(msg.timestamp, sub.timestamp)
-        self.assertEqual(msg.image, sub.value)
-        self.assertEqual(msg.source, sub.source)
-        self.assertEqual(msg.destination, sub.detination)
-
     def test_message_recieved(self):
         msg_type = DisplayNotification
         func = self.test_subsriber_1.process_display_notifiacton
-        Orchestration.register(msg_type, func)
+        self._orchestration.register(msg_type, func)
         msg = DisplayNotification(0,"test_message_recieved")
         
-        Orchestration.send(msg)
+        self._orchestration.send(msg)
 
         self.__compare_message_and_subscriber_display(msg, self.test_subsriber_1)
 
@@ -57,11 +52,11 @@ class OrchestrationTest(unittest.TestCase):
         msg_type = DisplayNotification
         func1 = self.test_subsriber_1.process_display_notifiacton
         func2 = self.test_subsriber_2.process_display_notifiacton
-        Orchestration.register(msg_type, func1)
-        Orchestration.register(msg_type, func2)
+        self._orchestration.register(msg_type, func1)
+        self._orchestration.register(msg_type, func2)
         msg = DisplayNotification(0,"test_message_recieved_multiple_subsriber")
         
-        Orchestration.send(msg)
+        self._orchestration.send(msg)
 
         self.__compare_message_and_subscriber_display(msg, self.test_subsriber_1)
         self.__compare_message_and_subscriber_display(msg, self.test_subsriber_2)
@@ -69,10 +64,10 @@ class OrchestrationTest(unittest.TestCase):
     def test_message_not_recieved_not_subscribed(self):
         msg_type = DisplayNotification
         func = self.test_subsriber_1.process_display_notifiacton
-        Orchestration.register(msg_type, func)
+        self._orchestration.register(msg_type, func)
         msg = DisplayNotification(0,"test_message_recieved")
         
-        Orchestration.send(msg)
+        self._orchestration.send(msg)
 
         self.__compare_message_and_subscriber_display(msg, self.test_subsriber_1)
 
@@ -80,4 +75,4 @@ class OrchestrationTest(unittest.TestCase):
         self.assertNotEqual(msg.text, self.test_subsriber_2.value)
         self.assertNotEqual(msg.source, self.test_subsriber_2.source)
         self.assertNotEqual(msg.destination, self.test_subsriber_2.detination)
-        
+     
